@@ -1,6 +1,6 @@
 package com.imam.user.service.payload;
 
-import lombok.*;
+
 import org.springframework.http.HttpStatus;
 
 
