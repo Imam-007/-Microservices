@@ -1,6 +1,7 @@
 package com.imam.user.service.services.impl;
 
 import com.imam.user.service.exceptions.ResourceNotFoundException;
+import com.imam.user.service.external.services.HotelService;
 import com.imam.user.service.model.Hotel;
 import com.imam.user.service.model.Rating;
 import com.imam.user.service.model.User;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private HotelService hotelService;
+
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
@@ -53,13 +57,12 @@ public class UserServiceImpl implements UserService {
         List<Rating> ratings = Arrays.stream(ratingOfUser).toList();
 
         List<Rating> ratingList = ratings.stream().map(rating -> {
-            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTELSERVICE/hotels/" + rating.getHotelId(), Hotel.class);
-            Hotel hotel = forEntity.getBody();
-            logger.info("Response Status code {} ", forEntity.getStatusCode());
+//            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTELSERVICE/hotels/" + rating.getHotelId(), Hotel.class);
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
+//            logger.info("Response Status code {} ", forEntity.getStatusCode());
             rating.setHotel(hotel);
             return rating;
         }).toList();
-
         user.setRatings(ratingList);
 
         return user;
